@@ -4,7 +4,7 @@
 #include <esp_log.h>
 #include <esp_now.h>
 #include "freertos/FreeRTOS.h"
-
+#include "FastLED.h"
 const char* TAG="Mahan";
 
 #define MAC_ADDR_LEN  6
@@ -12,7 +12,7 @@ const char* TAG="Mahan";
 static const uint8_t my_peers_addresses[][MAC_ADDR_LEN]={{0X08,0x3A,0xF2,0x65,0xE6,0x50}, {0x24,0x0A,0xC4,0xF8,0x8C,0x48}};
 static uint8_t my_mac[MAC_ADDR_LEN];
 int counter=0;
-
+CRGB leds[60];
 
 typedef struct message_s{
   uint64_t time_delta_ms;
@@ -95,7 +95,7 @@ void setup() {
   }
 
   ESP_LOGI(TAG,"ESP_ERR_ESPNOW_BASE: %d",ESP_ERR_ESPNOW_BASE);
-
+  FastLED.addLeds<NEOPIXEL, 26>(leds, 60); // M5Stack Gray
 
 }
 
@@ -137,5 +137,12 @@ void loop() {
     M5.Lcd.clear(WHITE);  // Clear the screen and set white to the background color.
     M5.Lcd.setCursor(0, 0);
   }
+
+  static uint8_t hue = 0;
+  if (255 == hue)
+      hue = 0;
+  else
+      FastLED.showColor(CHSV(hue++, 255, 50));
+
 }
 

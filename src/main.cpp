@@ -9,8 +9,13 @@
 #include "backpack_sync.h"
 #include "data_types.h"
 #include "singleton.h"
+#include "state.h"
+#include "outputs.h"
+#include "renderer.h"
+#include "transport.h"
 
 const char *TAG = "Mahan";
+
 
 using backpack::PatternId;
 using backpack::Patterns;
@@ -20,6 +25,11 @@ using backpack::Singleton;
 Patterns patterns;
 PatternId pattern_id;
 TaskHandle_t xHandle = NULL;
+
+Renderer *renderer;
+Outputs *outputs;
+State state = State();
+Transport transport = Transport(125);
 
 void light_task(void *PV_Parameters)
 {
@@ -75,6 +85,12 @@ void setup()
 
   BaseType_t xReturned;
 
+  transport.Reset();
+
+  delay(2000);
+
+  outputs = new Outputs(&state);
+  renderer = new Renderer(state);
 
   /* Create the task, storing the handle. */
   xReturned = xTaskCreate(
@@ -84,6 +100,10 @@ void setup()
       (void *)1,        /* Parameter passed into the task. */
       tskIDLE_PRIORITY, /* Priority at which the task is created. */
       &xHandle);        /* Used to pass out the created task's handle. */
+
+
+
+  
 }
 
 
@@ -121,4 +141,20 @@ void loop()
     M5.Lcd.clear(WHITE); // Clear the screen and set white to the background color.
     M5.Lcd.setCursor(0, 0);
   }
+
+    uint16_t pulses = transport.Update();
+    state.advance(pulses);
+
+    CRGB mixerOutput[STRAND_LENGTH];
+    CRGB previewOutput[STRAND_LENGTH];
+
+    renderer->Render(state, pulses);
+    renderer->CopyOutput(mixerOutput, previewOutput);
+
+    outputs->display(mixerOutput, previewOutput);
+
+    uint8_t delayMS = state.globalParam(GlobalParams::FrameDelay);
+
+    if (delayMS > 0)
+        FastLED.delay(delayMS);
 }

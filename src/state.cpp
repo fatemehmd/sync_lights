@@ -8,8 +8,10 @@ State::State()
         setLayerParam(LayerParams::MixOpacity, layerIdx, 0);
     }
 
+    setSelectedPattern(0, 3, true);
     setLayerParam(LayerParams::MixOpacity, 0, 255);
-    setLayerParam(LayerParams::MixOpacity, 0, 255);
+    setSelectedPattern(1, 4, true);
+    setLayerParam(LayerParams::MixOpacity, 1, 255);
 
     for (int stripIdx = 0; stripIdx < NUM_STRIPS; stripIdx++)
     {

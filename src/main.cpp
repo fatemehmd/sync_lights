@@ -96,7 +96,7 @@ void setup()
   xReturned = xTaskCreate(
       light_task,       /* Function that implements the task. */
       "lightzzzz",      /* Text name for the task. */
-      2048,             /* Stack size in words, not bytes. */
+      4096,             /* Stack size in words, not bytes. */
       (void *)1,        /* Parameter passed into the task. */
       tskIDLE_PRIORITY, /* Priority at which the task is created. */
       &xHandle);        /* Used to pass out the created task's handle. */
@@ -154,7 +154,4 @@ void loop()
     outputs->display(mixerOutput, previewOutput);
 
     uint8_t delayMS = state.globalParam(GlobalParams::FrameDelay);
-
-    if (delayMS > 0)
-        FastLED.delay(delayMS);
 }

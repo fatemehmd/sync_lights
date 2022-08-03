@@ -2,7 +2,7 @@
 #define SPARKLE_H
 
 #include "pattern.h"
-#include "../state.h"
+#include "graphics/state.h"
 
 class Sparkle : public Pattern
 {

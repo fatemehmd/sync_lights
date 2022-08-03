@@ -6,7 +6,6 @@
 #include <esp_log.h>
 #include <esp_now.h>
 #include "freertos/FreeRTOS.h"
-#include "patterns.h"
 #include "freertos/queue.h"
 
 namespace backpack {

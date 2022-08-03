@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <FastLED.h>
-#include <EEPROM.h>
 
 #define STRAND_LENGTH 144
 

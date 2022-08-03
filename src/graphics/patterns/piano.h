@@ -2,7 +2,7 @@
 #define PIANO_H
 
 #include "pattern.h"
-#include "state.h"
+#include "graphics/state.h"
 
 enum envelopePhase {REST, ATTACK, DECAY, SUSTAIN, RELEASE};
 

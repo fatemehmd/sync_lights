@@ -4,27 +4,22 @@
 #include <esp_log.h>
 #include <esp_now.h>
 #include "freertos/FreeRTOS.h"
-#include "patterns.h"
 #include "communication_helper.h"
 #include "backpack_sync.h"
 #include "data_types.h"
 #include "singleton.h"
-#include "state.h"
-#include "outputs.h"
-#include "renderer.h"
-#include "transport.h"
+#include "graphics/state.h"
+#include "graphics/outputs.h"
+#include "graphics/renderer.h"
+#include "graphics/transport.h"
 #include "data_types.h"
 
 const char *TAG = "Mahan";
 
 
-using backpack::PatternId;
-using backpack::Patterns;
 using backpack::BackpackSync;
 using backpack::Singleton;
 
-Patterns patterns;
-PatternId pattern_id;
 TaskHandle_t lightHandle = NULL;
 
 Renderer *renderer;
@@ -80,7 +75,6 @@ void light_task(void *PV_Parameters)
     if( ulNotifiedValue != 0 )
     {
       ESP_LOGI(TAG, "recieved notification");
-      patterns.TogglePattern();
     }*/
 
     if(pdPASS == xQueueReceive( Singleton::GetInstance()->GetParamsQueue(), &tmp_msg, (TickType_t)0))
@@ -116,9 +110,6 @@ void setup()
   esp_now_register_send_cb(BackpackSync::OnDataSent);
   esp_now_register_recv_cb(BackpackSync::OnDataRecv);
 
-  // setup lights
-  patterns.Setup();
-  pattern_id = PatternId::kRainbow;
 
   BaseType_t xReturned;
 

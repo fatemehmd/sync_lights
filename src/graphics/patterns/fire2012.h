@@ -2,7 +2,7 @@
 #define FIRE2012_H
 
 #include "pattern.h"
-#include "../state.h"
+#include "graphics/state.h"
 
 class Fire2012 : public Pattern
 {

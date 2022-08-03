@@ -5,7 +5,7 @@
 #include <FastLED.h>
 #endif
 
-#include "../state.h"
+#include "graphics/state.h"
 
 class Pattern
 {

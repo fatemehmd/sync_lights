@@ -2,7 +2,7 @@
 #define CLOUD_H
 
 #include "pattern.h"
-#include "../state.h"
+#include "graphics/state.h"
 
 class Cloud : public Pattern
 {

@@ -2,7 +2,7 @@
 #define ANALOGFEEDBACK_H
 
 #include "pattern.h"
-#include "../state.h"
+#include "graphics/state.h"
 
 class AnalogFeedback : public Pattern
 {

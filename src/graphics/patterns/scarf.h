@@ -2,7 +2,7 @@
 #define SCARF_H
 
 #include "pattern.h"
-#include "../state.h"
+#include "graphics/state.h"
 
 #define HUE_START .5
 #define HUE_END .75

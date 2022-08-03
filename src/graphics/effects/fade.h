@@ -1,7 +1,7 @@
 #ifndef FADE_H
 #define FADE_H
 
-#include "../state.h"
+#include "graphics/state.h"
 
 class Fade
 {

@@ -1,10 +1,8 @@
 #ifndef PARTICLES_H
 #define PARTICLES_H
 
-#include "state.h"
-
 #include "pattern.h"
-#include "../state.h"
+#include "graphics/state.h"
 
 #define MAX_PARTICLES 16
 

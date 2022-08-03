@@ -13,6 +13,7 @@
 #include "outputs.h"
 #include "renderer.h"
 #include "transport.h"
+#include "data_types.h"
 
 const char *TAG = "Mahan";
 
@@ -24,12 +25,48 @@ using backpack::Singleton;
 
 Patterns patterns;
 PatternId pattern_id;
-TaskHandle_t xHandle = NULL;
+TaskHandle_t lightHandle = NULL;
 
 Renderer *renderer;
 Outputs *outputs;
 State state = State();
 Transport transport = Transport(125);
+
+uint8_t layer = 0;
+uint8_t opacity = 0;
+uint8_t pattern = 0;
+
+
+void changePattern(int button) {
+  switch (button) {
+    case 1:
+      layer = (layer + 1) %4;
+      break;
+    case 2:
+      pattern = (pattern + 1) %6;
+      break;
+    default:
+    break;
+  }
+
+  M5.Lcd.printf("Switch to layer %d with pattern %d\n", layer, pattern);
+  backpack::LightParams tmp_msg;
+  tmp_msg.time_delta_ms = xTaskGetTickCount() / configTICK_RATE_HZ * 1000;
+  tmp_msg.layer = layer;
+  tmp_msg.pattern = pattern;
+  if( Singleton::GetInstance()->GetParamsQueue() != 0 )
+  {
+      /* Send an unsigned long.  Wait for 10 ticks for space to become
+      available if necessary. */
+      if( xQueueSend( Singleton::GetInstance()->GetParamsQueue(),
+                      &tmp_msg,
+                      ( TickType_t ) 10 ) != pdPASS )
+      {
+          /* Failed to post the message, even after 10 ticks. */
+          ESP_LOGE(TAG,"Failed To Push Msg to Queue!");
+      }
+  }
+}
 
 void light_task(void *PV_Parameters)
 {
@@ -37,22 +74,22 @@ void light_task(void *PV_Parameters)
   backpack::LightParams tmp_msg;
   while (true)
   {
+    /*
     ulNotifiedValue = ulTaskNotifyTake(pdFALSE ,0);
 
     if( ulNotifiedValue != 0 )
     {
       ESP_LOGI(TAG, "recieved notification");
-
       patterns.TogglePattern();
-    }
+    }*/
 
     if(pdPASS == xQueueReceive( Singleton::GetInstance()->GetParamsQueue(), &tmp_msg, (TickType_t)0))
     {
       ESP_LOGI(TAG, "recieved msg from queue");
-      patterns.TogglePattern();
+      ESP_LOGI(TAG, "layer %d, pattern %d, opacity %d", tmp_msg.layer, tmp_msg.pattern, tmp_msg.opacity);
+      state.setSelectedPattern(tmp_msg.layer, tmp_msg.pattern, true);
     }
-    patterns.RunPattern();
-    // vTaskDelay(pdMS_TO_TICKS(10));
+     vTaskDelay(pdMS_TO_TICKS(10));
   }
 }
 
@@ -96,14 +133,19 @@ void setup()
   xReturned = xTaskCreate(
       light_task,       /* Function that implements the task. */
       "lightzzzz",      /* Text name for the task. */
-      4096,             /* Stack size in words, not bytes. */
+      2048,             /* Stack size in words, not bytes. */
       (void *)1,        /* Parameter passed into the task. */
       tskIDLE_PRIORITY, /* Priority at which the task is created. */
-      &xHandle);        /* Used to pass out the created task's handle. */
+      &lightHandle);        /* Used to pass out the created task's handle. */
 
-
-
+  for ( uint8_t lidx = 0; lidx < 4; lidx++ ) {
   
+    for ( uint8_t pidx = 0; pidx != 4; pidx++ )
+    {
+        ESP_LOGI(TAG, "layer %d, param %d, value: %d", lidx, pidx, state.layerParam((LayerParams)pidx,lidx));
+
+    }
+  }
 }
 
 
@@ -127,14 +169,14 @@ void loop()
   }
   else if (M5.BtnB.wasReleased() || M5.BtnB.pressedFor(1000, 200))
   {
-    M5.Lcd.println("B");
-    xTaskNotify( xHandle,
-                  0,
-                  eIncrement);
+    M5.Lcd.println("Changing Layer");
+    changePattern(1);
   }
   else if (M5.BtnC.wasReleased() || M5.BtnC.pressedFor(1000, 200))
   {
-    M5.Lcd.println("C");
+    M5.Lcd.println("Changing Pattern");
+    changePattern(2);
+
   }
   else if (M5.BtnB.wasReleasefor(700))
   {

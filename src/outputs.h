@@ -18,6 +18,9 @@ private:
 
     CRGB ws2811[NUM_STRIPS * MAX_STRIP_LENGTH];
 
+    CRGB circularBuffer[BUFFER_SIZE][MAX_STRIP_LENGTH];
+
+
     int bufferWritePointer;
 
     State *__state;

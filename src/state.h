@@ -87,12 +87,6 @@ enum class PhysicalStripParams
     Direction = 2
 };
 
-enum class OperatingMode
-{
-    Manual = 0,
-    Green = 1
-};
-
 enum class GlobalParams
 {
     MasterOpacity = 0,
@@ -185,6 +179,8 @@ public:
 
     void nextPattern(int layerIdx);
     void prevPattern(int layerIdx);
+    void setSelectedPattern(uint8_t layerIdx, uint8_t patternIdx, bool setDefaults);
+
 
     uint8_t effectiveParam(uint8_t layerIdx, uint8_t paramIdx);
 
@@ -239,8 +235,7 @@ private:
     ParamBank _paramBanks[NUM_PARAM_BANKS];
     Snapshot _snapshots[NUM_SNAPSHOTS];
 
-    void setSelectedPattern(uint8_t layerIdx, uint8_t patternIdx, bool setDefaults);
-
+   
     uint8_t visibleParamBank();
     void registerParamBank(int bankIdx, const char *label, paramMetadata *params, bool setDefaults = true);
     void tryChangePatternParam(int bankIdx, int paramIdx, int amount);

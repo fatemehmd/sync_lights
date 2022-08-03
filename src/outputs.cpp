@@ -35,6 +35,9 @@ void Outputs::sampleTo(CRGB *source, CRGB *target, int targetCount)
 
 void Outputs::display(CRGB *leds, CRGB *previewLeds)
 {
+    // add to buffer
+    memcpy(circularBuffer[bufferWritePointer], leds, MAX_STRIP_LENGTH * sizeof(CRGB));
+
     // ws2811 output. right now hardcoded to be delay on first two strips, but with sampling.
     for (int stripIdx = 0; stripIdx < NUM_STRIPS; stripIdx++) {
         // determine which slot to load delay from
@@ -43,7 +46,8 @@ void Outputs::display(CRGB *leds, CRGB *previewLeds)
             bufferReadPointer += BUFFER_SIZE;
         
         int length = constrain(__state->physicalStripParam(PhysicalStripParams::Length, stripIdx), MIN_STRIP_LENGTH, MAX_STRIP_LENGTH);
-        
+        sampleTo(circularBuffer[bufferReadPointer], ws2811 + stripIdx * MAX_STRIP_LENGTH, length);
+
         // temporary, until we configure preview strip
         if (stripIdx == 1 && __state->globalParam(GlobalParams::PreviewNode) != 0) {
             sampleTo(previewLeds, ws2811 + stripIdx * MAX_STRIP_LENGTH, length);

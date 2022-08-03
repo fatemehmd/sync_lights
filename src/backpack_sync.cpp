@@ -17,9 +17,9 @@ bool BackpackSync::SendData()
 {
   LightParams tmp_msg;
   tmp_msg.time_delta_ms = xTaskGetTickCount() / configTICK_RATE_HZ * 1000;
-  tmp_msg.par_1 = counter;
-  tmp_msg.par_2 = 0;
-  tmp_msg.par_3 = 0;
+  tmp_msg.layer = counter;
+  tmp_msg.opacity = 0;
+  tmp_msg.pattern = 0;
   strcpy(tmp_msg.str, "Hello!");
   counter++;
   // Send message via ESP-NOW

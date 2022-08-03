@@ -8,9 +8,9 @@ namespace backpack {
 typedef struct LightParams
 {
   uint64_t time_delta_ms;
-  uint8_t par_1;
-  uint8_t par_2;
-  uint8_t par_3;
+  uint8_t layer;
+  uint8_t opacity;
+  uint8_t pattern;
   char str[32];
 };
 

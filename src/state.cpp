@@ -8,7 +8,7 @@ State::State()
         setLayerParam(LayerParams::MixOpacity, layerIdx, 0);
     }
 
-    setSelectedPattern(0, 3, true);
+    setSelectedPattern(0, 6, true);
     setLayerParam(LayerParams::MixOpacity, 0, 255);
     setSelectedPattern(1, 4, true);
     setLayerParam(LayerParams::MixOpacity, 1, 255);

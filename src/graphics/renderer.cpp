@@ -12,36 +12,14 @@ Renderer::Renderer(State &state)
     fadeFX = new Fade(bankIdx);
 
     for (int layerIdx = 0; layerIdx < NUM_LAYERS; layerIdx++)
-        generators[layerIdx] = NULL;
+        patterns[layerIdx] = NULL;
 }
 
-Pattern *Renderer::makeGenerator(uint8_t idx)
-{
-    switch (idx)
-    {
-    case 0:
-        return new Cloud();
-    case 1:
-        return new AnalogFeedback();
-    case 2:
-        return new RainbowBlast();
-    case 3:
-        return new Particles();
-    case 4:
-        return new Fire2012();
-    case 5:
-        return new Scarf();
-    case 6:
-        return new Sparkle();
-    case 7:
-        return new Cleave();
-    case 8:
-        return new Strobe();
-    case 9:
-        return new Piano();
-    default:
-        return new TestPattern();
-    }
+void Renderer::setPattern(int layerIdx, int patternIdx, Pattern* pattern) {
+    if (patterns[layerIdx] != NULL)
+        delete patterns[layerIdx];
+    patterns[layerIdx] = pattern;
+    patterns[layerIdx]->setLayerIdx(layerIdx);
 }
 
 void Renderer::Render(State &state, unsigned long pulses)
@@ -51,28 +29,16 @@ void Renderer::Render(State &state, unsigned long pulses)
 
     for (int layerIdx = 0; layerIdx < NUM_LAYERS; layerIdx++)
     {
+        if (patterns[layerIdx] == NULL)
+            continue;
         uint8_t patternIdx = state.layerParam(LayerParams::SelectedPattern, layerIdx);
-        uint8_t mode = patternIdx >> 6;
-        patternIdx = patternIdx % 64;
-
-        if (mode > 0)
-        {
-            if (generators[layerIdx] != NULL)
-                delete generators[layerIdx];
-            generators[layerIdx] = makeGenerator(patternIdx);
-            generators[layerIdx]->setLayerIdx(layerIdx);
-
-            bool setDefaults = (mode == 1);
-            state.setLayerParam(LayerParams::SelectedPattern, layerIdx, patternIdx);
-            state.registerGenerator(layerIdx, generators[layerIdx]->getLabel(), generators[layerIdx]->getParamMetaData(), setDefaults);
-        }
 
         bool render = (state.layerParam(LayerParams::Bypass, layerIdx) == 0) &&
                       (!state.anySolo() || (state.anySolo() && state.layerParam(LayerParams::Solo, layerIdx) > 0)) &&
                       (patternIdx != 255);
         if (render)
         {
-            generators[layerIdx]->fill(layerOutput8bit[layerIdx], pulses, state);
+            patterns[layerIdx]->fill(layerOutput8bit[layerIdx], pulses, state);
             for (int i = 0; i < STRAND_LENGTH; i++)
                 layerOutput[layerIdx][i] = state.getColor(layerIdx, layerOutput8bit[layerIdx][i]);
             if (state.layerParam(LayerParams::MixOpacity, layerIdx) < 255)

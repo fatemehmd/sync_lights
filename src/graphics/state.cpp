@@ -2,16 +2,6 @@
 
 State::State()
 {
-    for (int layerIdx = 0; layerIdx < NUM_LAYERS; layerIdx++)
-    {
-        setSelectedPattern(layerIdx, layerIdx, true);
-        setLayerParam(LayerParams::MixOpacity, layerIdx, 0);
-    }
-
-    setSelectedPattern(0, 6, true);
-    setLayerParam(LayerParams::MixOpacity, 0, 255);
-    setSelectedPattern(1, 4, true);
-    setLayerParam(LayerParams::MixOpacity, 1, 255);
 
     for (int stripIdx = 0; stripIdx < NUM_STRIPS; stripIdx++)
     {
@@ -231,6 +221,10 @@ CHSVPalette16 State::palette(int layerIdx)
 {
     return _palette[layerIdx];
 }
+void State::changePatternParam(int layerIdx, int paramIdx, int amount) {
+    int bankIdx = paramBankIdx(layerIdx, UISections::Main);
+    tryChangePatternParam(bankIdx, paramIdx, amount);
+}
 
 void State::tryChangePatternParam(int bgIdx, int paramIdx, int amount)
 {
@@ -286,7 +280,7 @@ void State::prevPattern(int layerIdx)
 void State::setSelectedPattern(uint8_t layerIdx, uint8_t patternIdx, bool setDefaults)
 {
     // corresponds with render loading behaviour
-    setLayerParam(LayerParams::SelectedPattern, layerIdx, patternIdx | (setDefaults ? 0x40 : 0x80));
+    setLayerParam(LayerParams::SelectedPattern, layerIdx, patternIdx);
 }
 
 uint8_t State::layerParam(LayerParams param, uint8_t layerIdx)

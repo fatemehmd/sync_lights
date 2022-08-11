@@ -13,6 +13,7 @@
 #include "graphics/renderer.h"
 #include "graphics/transport.h"
 #include "data_types.h"
+#include "graphic_controller.h"
 
 const char *TAG = "Mahan";
 
@@ -22,10 +23,8 @@ using backpack::Singleton;
 
 TaskHandle_t lightHandle = NULL;
 
-Renderer *renderer;
-Outputs *outputs;
-State state = State();
-Transport transport = Transport(125);
+
+GraphicController graphic_controller = GraphicController();
 
 uint8_t layer = 0;
 uint8_t opacity = 0;
@@ -81,7 +80,7 @@ void light_task(void *PV_Parameters)
     {
       ESP_LOGI(TAG, "recieved msg from queue");
       ESP_LOGI(TAG, "layer %d, pattern %d, opacity %d", tmp_msg.layer, tmp_msg.pattern, tmp_msg.opacity);
-      state.setSelectedPattern(tmp_msg.layer, tmp_msg.pattern, true);
+      graphic_controller.setPattern(tmp_msg.layer, tmp_msg.pattern);
     }
      vTaskDelay(pdMS_TO_TICKS(10));
   }
@@ -113,13 +112,8 @@ void setup()
 
   BaseType_t xReturned;
 
-  transport.Reset();
 
-  delay(2000);
-
-  outputs = new Outputs(&state);
-  renderer = new Renderer(state);
-
+  graphic_controller.setup();
   /* Create the task, storing the handle. */
   xReturned = xTaskCreate(
       light_task,       /* Function that implements the task. */
@@ -128,15 +122,6 @@ void setup()
       (void *)1,        /* Parameter passed into the task. */
       tskIDLE_PRIORITY, /* Priority at which the task is created. */
       &lightHandle);        /* Used to pass out the created task's handle. */
-
-  for ( uint8_t lidx = 0; lidx < 4; lidx++ ) {
-  
-    for ( uint8_t pidx = 0; pidx != 4; pidx++ )
-    {
-        ESP_LOGI(TAG, "layer %d, param %d, value: %d", lidx, pidx, state.layerParam((LayerParams)pidx,lidx));
-
-    }
-  }
 }
 
 
@@ -175,16 +160,6 @@ void loop()
     M5.Lcd.setCursor(0, 0);
   }
 
-    uint16_t pulses = transport.Update();
-    state.advance(pulses);
+  graphic_controller.update();
 
-    CRGB mixerOutput[STRAND_LENGTH];
-    CRGB previewOutput[STRAND_LENGTH];
-
-    renderer->Render(state, pulses);
-    renderer->CopyOutput(mixerOutput, previewOutput);
-
-    outputs->display(mixerOutput, previewOutput);
-
-    uint8_t delayMS = state.globalParam(GlobalParams::FrameDelay);
 }

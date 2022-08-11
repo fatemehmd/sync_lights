@@ -163,6 +163,7 @@ public:
     paramType visibleParamType(int idx);
     char *visibleParamLabel(int idx);
     void tryChangeVisibleParam(int idx, int amount);
+    void changePatternParam(int layerIdx, int paramIdx, int amount);
     uint8_t paramRecentlyTouched(int idx);
     const char *visibleParamBankLabel();
 
@@ -179,7 +180,6 @@ public:
     void nextPattern(int layerIdx);
     void prevPattern(int layerIdx);
     void setSelectedPattern(uint8_t layerIdx, uint8_t patternIdx, bool setDefaults);
-
 
     uint8_t effectiveParam(uint8_t layerIdx, uint8_t paramIdx);
 
@@ -222,6 +222,7 @@ public:
 
     uint8_t lfoValue(uint8_t layerIdx);
     void triggerLFO(uint8_t layerIdx);
+    
 
 private:
     int _uiSelectedPageIdx = 0; // rename page to just layers, probably

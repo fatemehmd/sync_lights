@@ -57,7 +57,7 @@ void Renderer::Render(State &state, unsigned long pulses)
             mixerOutput[i] += layerOutput[layerIdx][i];
     }
 
-    CRGB dryOutput[STRAND_LENGTH];
+    /*CRGB dryOutput[STRAND_LENGTH];
     CRGB wetOutput[STRAND_LENGTH];
 
     memcpy(dryOutput, mixerOutput, sizeof(CRGB) * STRAND_LENGTH);
@@ -66,7 +66,7 @@ void Renderer::Render(State &state, unsigned long pulses)
     fadeFX->process(wetOutput, mixerOutput, STRAND_LENGTH, state);
 
     nblend(wetOutput, dryOutput, STRAND_LENGTH, 255 - state.globalParam(GlobalParams::FXOpacity));
-    memcpy(mixerOutput, wetOutput, STRAND_LENGTH * sizeof(CRGB));
+    memcpy(mixerOutput, wetOutput, STRAND_LENGTH * sizeof(CRGB));*/
 
     if (state.globalParam(GlobalParams::MasterOpacity) < 255)
         fadeToBlackBy(mixerOutput, STRAND_LENGTH, 255 - state.globalParam(GlobalParams::MasterOpacity));

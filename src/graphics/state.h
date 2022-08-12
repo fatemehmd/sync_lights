@@ -21,7 +21,7 @@
 
 #define NUM_SECTIONS 3
 
-#define NUM_STRIPS 8
+#define NUM_STRIPS 1
 #define NUM_STRIP_PARAMS 8
 #define ACTIVE_STRIP_PARAMS 3
 

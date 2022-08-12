@@ -14,10 +14,10 @@ State::State()
     setGlobalParam(GlobalParams::FXOpacity, 0);
 
     paramMetadata colorParam[NUM_PARAMS_SIX];
-    colorParam[0] = {CIRCULAR, 240, "HUE"};
-    colorParam[1] = {NORMAL, 183, "SPD"};
+    colorParam[0] = {CIRCULAR, 150, "HUE"};
+    colorParam[1] = {NORMAL, 170, "SPD"};
     colorParam[2] = {NORMAL, 255, "SAT"};
-    colorParam[3] = {NORMAL, 255, "RNG"};
+    colorParam[3] = {NORMAL, 10, "RNG"};
     colorParam[4] = {NORMAL, 0, "BLK"};
 
     paramMetadata lfoParam[NUM_PARAMS_SIX];
@@ -214,7 +214,7 @@ CRGB State::getColor(uint8_t layerIdx, uint8_t colIdx)
     cIndex = constrain(slope * (int16_t)cIndex - 256 * (slope - 1), 0, 255);
     // avoid wrap around behaviour
     cIndex = map8(cIndex, 0, 240);
-    return ColorFromPalette(this->palette(layerIdx), cIndex, lerp8by8(255, cIndex, dynamicRange)); // not sure this is right. too bright?
+    return ColorFromPalette(this->palette(layerIdx), cIndex, lerp8by8(colIdx, 255, dynamicRange)); // not sure this is right. too bright?
 }
 
 CHSVPalette16 State::palette(int layerIdx)

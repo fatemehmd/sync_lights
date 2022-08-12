@@ -21,10 +21,8 @@ void GraphicController::setup() {
         setPattern(layerIdx, layerIdx);
         state.setLayerParam(LayerParams::MixOpacity, layerIdx, 0);
     }
-    setPattern(0, 4);
-    state.setLayerParam(LayerParams::MixOpacity, 0, 255);
-    setPattern(1,6);
-    state.setLayerParam(LayerParams::MixOpacity, 1, 255);
+    setPattern(0, 0);
+    state.setLayerParam(LayerParams::MixOpacity, 0, 250);
 }
 
 void GraphicController::update() {

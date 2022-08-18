@@ -17,7 +17,10 @@ namespace graphics {
     "Cleave",
     "Strobe",
     "Piano"};
-}
+
+
+std::string getPatternList();
+}  // namespace graphics
 
 class GraphicController
 {
@@ -28,6 +31,8 @@ public:
     void changeOpacity(int layerIdx, int value);
     void setPattern(int layerIdx, int patternIdx);
     void getPatternParams(int layerIdx);
+    int getLayerPattern(int layerIdx);
+    void setHue(int layerIx, int hue);
     void setup();
     void update();
 

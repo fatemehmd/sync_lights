@@ -35,13 +35,13 @@ void BackpackSync::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t sta
   ESP_LOGI(TAG_BACKPACK, "%s", status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
   if (status == ESP_NOW_SEND_SUCCESS)
   {
-    M5.Lcd.setTextColor(GREEN);
-    M5.Lcd.println("Delivery Success");
+   // M5.Lcd.setTextColor(GREEN);
+   // M5.Lcd.println("Delivery Success");
   }
   else
   {
-    M5.Lcd.setTextColor(RED);
-    M5.Lcd.println("Delivery Fail");
+   // M5.Lcd.setTextColor(RED);
+    // M5.Lcd.println("Delivery Fail");
   }
 }
 
@@ -52,8 +52,8 @@ void BackpackSync::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, i
   for (int i = 0; i < len / sizeof(tmp_msg); i += sizeof(tmp_msg))
   {
     memcpy(&tmp_msg + i, incomingData, sizeof(tmp_msg));
-    M5.Lcd.setTextColor(WHITE);
-    M5.Lcd.printf("Got Data:%d\r\n", i);
+    //M5.Lcd.setTextColor(WHITE);
+   // M5.Lcd.printf("Got Data:%d\r\n", i);
     if( Singleton::GetInstance()->GetParamsQueue() != 0 )
     {
         /* Send an unsigned long.  Wait for 10 ticks for space to become

@@ -173,6 +173,7 @@ public:
     void advance(uint16_t pulses);
 
     void setupPalette();
+    void setHue(int layerIdx, int hue);
 
     CRGB getColor(uint8_t layerIdx, uint8_t colIdx);
     CHSVPalette16 palette(int layerIdx);
@@ -180,6 +181,7 @@ public:
     void nextPattern(int layerIdx);
     void prevPattern(int layerIdx);
     void setSelectedPattern(uint8_t layerIdx, uint8_t patternIdx, bool setDefaults);
+    uint8_t getSelectedPattern(uint8_t layerIdx);
 
     uint8_t effectiveParam(uint8_t layerIdx, uint8_t paramIdx);
 

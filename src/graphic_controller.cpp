@@ -6,6 +6,16 @@
 const char *gTAG = "gcntroller";
 
 
+namespace graphics {
+    std::string getPatternList() {
+    std::string list = "";
+    for (const std::string& s : graphics::patternList) {
+        list += s + "\n";
+    }
+    return list;
+}
+}  // namespace graphics
+
 void GraphicController::setup() {
   transport.Reset();
 
@@ -22,7 +32,9 @@ void GraphicController::setup() {
         state.setLayerParam(LayerParams::MixOpacity, layerIdx, 0);
     }
     setPattern(0, 0);
-    state.setLayerParam(LayerParams::MixOpacity, 0, 250);
+    state.setLayerParam(LayerParams::MixOpacity, 0, 180);
+    setPattern(1, 6);
+    state.setLayerParam(LayerParams::MixOpacity, 1, 150);
 }
 
 void GraphicController::update() {
@@ -39,6 +51,10 @@ void GraphicController::update() {
     outputs->display(mixerOutput, previewOutput);
 
     uint8_t delayMS = state.globalParam(GlobalParams::FrameDelay);
+}
+
+int GraphicController::getLayerPattern(int layerIdx) {
+    return state.getSelectedPattern(layerIdx);
 }
 
 void GraphicController::changePatternParam(int layerIdx, int paramIdx, int value) {
@@ -58,7 +74,9 @@ void GraphicController::setPattern(int layerIdx, int patternIdx) {
     state.registerGenerator(layerIdx, pattern->getLabel(), pattern->getParamMetaData(), true);
 }
 
-
+void GraphicController::setHue(int layerIdx, int hue) {
+    state.setHue(layerIdx, hue);
+}
 void GraphicController::getPatternParams(int layerIdx) {
     //return state.getPatternParam(layerIdx);
 }

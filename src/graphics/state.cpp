@@ -6,7 +6,7 @@ State::State()
     for (int stripIdx = 0; stripIdx < NUM_STRIPS; stripIdx++)
     {
         setPhysicalStripParam(PhysicalStripParams::ColorOrder, stripIdx, GRB);
-        setPhysicalStripParam(PhysicalStripParams::Length, stripIdx, 60);
+        setPhysicalStripParam(PhysicalStripParams::Length, stripIdx, 100);
         setPhysicalStripParam(PhysicalStripParams::Direction, stripIdx, 0); // FWD
     }
 
@@ -41,6 +41,7 @@ State::State()
     // loadScene(0);
 #endif
 }
+
 
 void State::updateUISelectedField(int8_t amount)
 {
@@ -181,6 +182,11 @@ const char *State::getLayerPatternLabel(int layerIdx)
     return _paramBanks[paramBankIdx(layerIdx, UISections::Main)].label;
 }
 
+void State::setHue(int layerIdx, int hue) {
+    int idx = paramBankIdx(layerIdx, UISections::Color);
+    _paramBanks[idx].params[0] = hue;
+}
+
 void State::setupPalette()
 {
     for (int layerIdx = 0; layerIdx < 4; layerIdx++)
@@ -281,6 +287,10 @@ void State::setSelectedPattern(uint8_t layerIdx, uint8_t patternIdx, bool setDef
 {
     // corresponds with render loading behaviour
     setLayerParam(LayerParams::SelectedPattern, layerIdx, patternIdx);
+}
+
+uint8_t State::getSelectedPattern(uint8_t layerIdx) {
+    return _layerParams[layerIdx][(uint8_t)LayerParams::SelectedPattern];
 }
 
 uint8_t State::layerParam(LayerParams param, uint8_t layerIdx)

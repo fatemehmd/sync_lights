@@ -1,9 +1,16 @@
+
 #include <Arduino.h>
-#include <M5Core2.h>
-#include "WiFi.h"
 #include <esp_log.h>
 #include <esp_now.h>
+#include <lvgl.h>
+#include <M5Core2.h>
+#include <SPI.h>
+
+
+
 #include "freertos/FreeRTOS.h"
+#include "WiFi.h"
+
 #include "communication_helper.h"
 #include "backpack_sync.h"
 #include "data_types.h"
@@ -14,8 +21,10 @@
 #include "graphics/transport.h"
 #include "data_types.h"
 #include "graphic_controller.h"
+#include "display/display_content.h"
 
-const char *TAG = "Mahan";
+
+const char *TAG = "Main";
 
 
 using backpack::BackpackSync;
@@ -23,8 +32,10 @@ using backpack::Singleton;
 
 TaskHandle_t lightHandle = NULL;
 
+TFT_eSPI tft = TFT_eSPI();
 
 GraphicController graphic_controller = GraphicController();
+DisplayContent display_content = DisplayContent(&graphic_controller);
 
 uint8_t layer = 0;
 uint8_t opacity = 0;
@@ -43,7 +54,7 @@ void changePattern(int button) {
     break;
   }
 
-  M5.Lcd.printf("Switch to layer %d with pattern %d\n", layer, pattern);
+  // M5.Lcd.printf("Switch to layer %d with pattern %d\n", layer, pattern);
   backpack::LightParams tmp_msg;
   tmp_msg.time_delta_ms = xTaskGetTickCount() / configTICK_RATE_HZ * 1000;
   tmp_msg.layer = layer;
@@ -89,17 +100,12 @@ void light_task(void *PV_Parameters)
 void setup()
 {
   M5.begin();
- 
+
 
   esp_log_level_set(TAG, ESP_LOG_DEBUG);
   ESP_LOGI(TAG, "Starting Initialization...");
   // put your setup code here, to run once:
   ESP_LOGI(TAG, "Settuing Up Display...");
-
-  M5.Lcd.setCursor(0, 0);     // Move the cursor position to (x,y).
-  M5.Lcd.setTextColor(WHITE); // Set the font color to white.
-  M5.Lcd.setTextSize(2);      // Set the font size.
-  M5.Lcd.println("Display Test!");
 
   backpack::SetupWifi();
 
@@ -112,8 +118,12 @@ void setup()
 
   BaseType_t xReturned;
 
+  tft.begin();
+  tft.setRotation(1);
 
   graphic_controller.setup();
+  display_content.setup();
+
   /* Create the task, storing the handle. */
   xReturned = xTaskCreate(
       light_task,       /* Function that implements the task. */
@@ -134,32 +144,34 @@ void loop()
   {
     if (BackpackSync::SendData())
     {
-      M5.Lcd.setTextColor(GREEN);
-      M5.Lcd.println("Broadcasted.");
+      /* M5.Lcd.setTextColor(GREEN);
+      M5.Lcd.println("Broadcasted."); */
     }
     else
     {
-      M5.Lcd.setTextColor(RED);
-      M5.Lcd.println("Broadcast Failed!");
+/*       M5.Lcd.setTextColor(RED);
+      M5.Lcd.println("Broadcast Failed!"); */
     }
   }
   else if (M5.BtnB.wasReleased() || M5.BtnB.pressedFor(1000, 200))
   {
-    M5.Lcd.println("Changing Layer");
+    //M5.Lcd.println("Changing Layer");
     changePattern(1);
   }
   else if (M5.BtnC.wasReleased() || M5.BtnC.pressedFor(1000, 200))
   {
-    M5.Lcd.println("Changing Pattern");
+    //M5.Lcd.println("Changing Pattern");
     changePattern(2);
 
   }
   else if (M5.BtnB.wasReleasefor(700))
   {
-    M5.Lcd.clear(WHITE); // Clear the screen and set white to the background color.
-    M5.Lcd.setCursor(0, 0);
+   // M5.Lcd.clear(WHITE); // Clear the screen and set white to the background color.
+   // M5.Lcd.setCursor(0, 0);
   }
 
   graphic_controller.update();
+  display_content.update();
+  delay(5);
 
 }

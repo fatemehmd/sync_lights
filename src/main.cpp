@@ -42,46 +42,14 @@ uint8_t opacity = 0;
 uint8_t pattern = 0;
 
 
-void changePattern(int button) {
-  switch (button) {
-    case 1:
-      layer = (layer + 1) %4;
-      break;
-    case 2:
-      pattern = (pattern + 1) %6;
-      break;
-    default:
-    break;
-  }
-
-  // M5.Lcd.printf("Switch to layer %d with pattern %d\n", layer, pattern);
-  backpack::LightParams tmp_msg;
-  tmp_msg.time_delta_ms = xTaskGetTickCount() / configTICK_RATE_HZ * 1000;
-  tmp_msg.layer = layer;
-  tmp_msg.pattern = pattern;
-  if( Singleton::GetInstance()->GetParamsQueue() != 0 )
-  {
-      /* Send an unsigned long.  Wait for 10 ticks for space to become
-      available if necessary. */
-      if( xQueueSend( Singleton::GetInstance()->GetParamsQueue(),
-                      &tmp_msg,
-                      ( TickType_t ) 10 ) != pdPASS )
-      {
-          /* Failed to post the message, even after 10 ticks. */
-          ESP_LOGE(TAG,"Failed To Push Msg to Queue!");
-      }
-  }
-}
-
 void light_task(void *PV_Parameters)
 {
   uint32_t ulNotifiedValue;
-  backpack::LightParams tmp_msg;
+  backpack::LightParams2 tmp_msg;
   while (true)
   {
-    /*
+    /* Example code
     ulNotifiedValue = ulTaskNotifyTake(pdFALSE ,0);
-
     if( ulNotifiedValue != 0 )
     {
       ESP_LOGI(TAG, "recieved notification");
@@ -90,8 +58,7 @@ void light_task(void *PV_Parameters)
     if(pdPASS == xQueueReceive( Singleton::GetInstance()->GetParamsQueue(), &tmp_msg, (TickType_t)0))
     {
       ESP_LOGI(TAG, "recieved msg from queue");
-      ESP_LOGI(TAG, "layer %d, pattern %d, opacity %d", tmp_msg.layer, tmp_msg.pattern, tmp_msg.opacity);
-      graphic_controller.setPattern(tmp_msg.layer, tmp_msg.pattern);
+      //graphic_controller.setPattern(tmp_msg.layer, tmp_msg.pattern);
     }
      vTaskDelay(pdMS_TO_TICKS(10));
   }
@@ -144,30 +111,12 @@ void loop()
   {
     if (BackpackSync::SendData())
     {
-      /* M5.Lcd.setTextColor(GREEN);
-      M5.Lcd.println("Broadcasted."); */
+      ESP_LOGI(TAG,"Data sent successfully.");
     }
     else
     {
-/*       M5.Lcd.setTextColor(RED);
-      M5.Lcd.println("Broadcast Failed!"); */
+      ESP_LOGE(TAG,"Failed to send data.");
     }
-  }
-  else if (M5.BtnB.wasReleased() || M5.BtnB.pressedFor(1000, 200))
-  {
-    //M5.Lcd.println("Changing Layer");
-    changePattern(1);
-  }
-  else if (M5.BtnC.wasReleased() || M5.BtnC.pressedFor(1000, 200))
-  {
-    //M5.Lcd.println("Changing Pattern");
-    changePattern(2);
-
-  }
-  else if (M5.BtnB.wasReleasefor(700))
-  {
-   // M5.Lcd.clear(WHITE); // Clear the screen and set white to the background color.
-   // M5.Lcd.setCursor(0, 0);
   }
 
   graphic_controller.update();

@@ -187,6 +187,11 @@ void State::setHue(int layerIdx, int hue) {
     _paramBanks[idx].params[0] = hue;
 }
 
+int State::getHue(int layerIdx) {
+    int idx = paramBankIdx(layerIdx, UISections::Color);
+    return _paramBanks[idx].params[0];
+}
+
 void State::setupPalette()
 {
     for (int layerIdx = 0; layerIdx < 4; layerIdx++)

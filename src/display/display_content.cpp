@@ -151,7 +151,7 @@ void DisplayContent::createLayerContent(lv_obj_t* tab_ptr, int layerIdx) {
   lv_obj_t * ddlist = lv_dropdown_create(tab_ptr);
   const char* options = graphics::getPatternList().c_str();
   lv_dropdown_set_options(ddlist, options);
-  int pattern = graphic_controller_->getLayerPattern(layerIdx);
+  int pattern = graphic_controller_->getPattern(layerIdx);
   ESP_LOGI(TAG, "Settuing Up List for layer %d with pattern %d", layerIdx, pattern);
   lv_dropdown_set_selected(ddlist, pattern);
 

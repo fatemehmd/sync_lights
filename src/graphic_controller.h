@@ -5,6 +5,7 @@
 #include "graphics/renderer.h"
 #include "graphics/outputs.h"
 #include "graphics/transport.h"
+#include "data_types.h"
 
 namespace graphics {
     static const std::string patternList[10] = {"Cloud", 
@@ -27,14 +28,26 @@ class GraphicController
 public:
     GraphicController(){};
     ~GraphicController() {};
-    void changePatternParam(int layerIdx, int paramIdx, int value);
-    void changeOpacity(int layerIdx, int value);
-    void setPattern(int layerIdx, int patternIdx);
+    void setPatternParam(int layerIdx, int paramIdx, int value);
     void getPatternParams(int layerIdx);
-    int getLayerPattern(int layerIdx);
-    void setHue(int layerIx, int hue);
+
+    void setOpacity(int layerIdx, int value);
+    int getOpacity(int layerIdx);
+  
+    void setPattern(int layerIdx, int patternIdx);
+    int getPattern(int layerIdx);
+
+    void setHue(int layerIdx, int hue);
+    int getHue(int layerIdx);
+    
+    //void setHueSpan(int layerIdx, int span);
+    
+    void setLightParams(backpack::LightParams& params);
+    backpack::LightParams getLightParams();
+
     void setup();
     void update();
+
 
 private:
     Renderer *renderer;

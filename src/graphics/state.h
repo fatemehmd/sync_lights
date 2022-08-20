@@ -1,4 +1,4 @@
-#ifndef STATE_H
+    #ifndef STATE_H
 #define STATE_H
 
 #include <stdint.h>
@@ -174,6 +174,7 @@ public:
 
     void setupPalette();
     void setHue(int layerIdx, int hue);
+    int getHue(int layerIdx);
 
     CRGB getColor(uint8_t layerIdx, uint8_t colIdx);
     CHSVPalette16 palette(int layerIdx);

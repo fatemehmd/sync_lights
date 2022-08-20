@@ -58,7 +58,7 @@ void light_task(void *PV_Parameters)
     if(pdPASS == xQueueReceive( Singleton::GetInstance()->GetParamsQueue(), &light_params, (TickType_t)0))
     {
       ESP_LOGI(TAG, "recieved msg from queue");
-      //graphic_controller.setPattern(tmp_msg.layer, tmp_msg.pattern);
+      graphic_controller.setLightParams(light_params);
     }
      vTaskDelay(pdMS_TO_TICKS(10));
   }
@@ -109,7 +109,10 @@ void loop()
   M5.update(); // Read the press state of the key.
   if (M5.BtnA.wasReleased() || M5.BtnA.pressedFor(1000, 200))
   {
-    if (BackpackSync::SendData())
+  backpack::LightParams light_params = graphic_controller.getLightParams();
+
+  strcpy(light_params.message, "Hello!");
+    if (BackpackSync::SendData(light_params))
     {
       ESP_LOGI(TAG,"Data sent successfully.");
     }

@@ -5,6 +5,7 @@
 
 const char *gTAG = "gcntroller";
 
+using backpack::LightParams;
 
 namespace graphics {
     std::string getPatternList() {
@@ -53,18 +54,6 @@ void GraphicController::update() {
     uint8_t delayMS = state.globalParam(GlobalParams::FrameDelay);
 }
 
-int GraphicController::getLayerPattern(int layerIdx) {
-    return state.getSelectedPattern(layerIdx);
-}
-
-void GraphicController::changePatternParam(int layerIdx, int paramIdx, int value) {
-    state.changePatternParam(layerIdx, paramIdx, value);
-}
-
-void GraphicController::changeOpacity(int layerIdx, int value) {
-    state.setLayerParam(LayerParams::MixOpacity, layerIdx, value);
-}
-
 void GraphicController::setPattern(int layerIdx, int patternIdx) {
     state.setSelectedPattern(layerIdx, patternIdx, true);
 
@@ -74,10 +63,63 @@ void GraphicController::setPattern(int layerIdx, int patternIdx) {
     state.registerGenerator(layerIdx, pattern->getLabel(), pattern->getParamMetaData(), true);
 }
 
-void GraphicController::setHue(int layerIdx, int hue) {
-    state.setHue(layerIdx, hue);
+int GraphicController::getPattern(int layerIdx) {
+    return state.getSelectedPattern(layerIdx);
 }
+
+
+void GraphicController::setPatternParam(int layerIdx, int paramIdx, int value) {
+    state.changePatternParam(layerIdx, paramIdx, value);
+}
+
 void GraphicController::getPatternParams(int layerIdx) {
     //return state.getPatternParam(layerIdx);
 }
 
+void GraphicController::setOpacity(int layerIdx, int value) {
+    state.setLayerParam(LayerParams::MixOpacity, layerIdx, value);
+}
+
+int GraphicController::getOpacity(int layerIdx) {
+    return state.layerParam(LayerParams::MixOpacity, layerIdx);
+}
+
+
+void GraphicController::setHue(int layerIdx, int hue) {
+    state.setHue(layerIdx, hue);
+}
+
+int GraphicController::getHue(int layerIdx) {
+    return state.getHue(layerIdx);
+}
+
+backpack::LightParams GraphicController::getLightParams() {
+    // layer, color, pattern
+    LightParams params;
+    strcpy(params.message, "Hello!");
+    params.time_delta_ms = xTaskGetTickCount() / configTICK_RATE_HZ * 1000;
+    for (int i=0; i<M5_NUM_LAYERS; i++) {
+        params.layer_data[i].layerIdx = i;
+        params.layer_data[i].opacity = getOpacity(i);
+        params.layer_data[i].pattern = getPattern(i);
+        params.layer_data[i].hue = getHue(i);
+    }
+
+    return params;
+}
+
+void GraphicController::setLightParams(backpack::LightParams& params) {
+
+      for (int i=0; i<M5_NUM_LAYERS; i++) {
+        ESP_LOGI(gTAG, "layer %d, pattern %d, opacity %d", 
+                      params.layer_data[i].layerIdx, 
+                      params.layer_data[i].pattern, 
+                      params.layer_data[i].opacity);
+
+        int layerIdx = params.layer_data[i].layerIdx;
+        setPattern(layerIdx,  params.layer_data[i].pattern);
+        setHue(layerIdx, params.layer_data[i].hue);
+       // setHueSpan(layerIdx,params.layer_data[i].pallete_params.hue_span);
+        setOpacity(layerIdx, params.layer_data[i].opacity);
+      }
+}

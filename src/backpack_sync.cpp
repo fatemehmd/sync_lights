@@ -15,16 +15,21 @@ int counter = 0;
 
 bool BackpackSync::SendData()
 {
-  LightParams2 tmp_msg;
+  LightParams light_params;
 
  
-   tmp_msg.time_delta_ms = xTaskGetTickCount() / configTICK_RATE_HZ * 1000;
+   light_params.time_delta_ms = xTaskGetTickCount() / configTICK_RATE_HZ * 1000;
+   light_params.layer_data[0].layerIdx = 0;
+  light_params.layer_data[0].pattern = 6;
+   light_params.layer_data[0].opacity = 110;
+  strcpy(light_params.message, "Hello!");
+
 
   counter++;
   ESP_LOGI(TAG_BACKPACK, " test: %d, max_length %d:",
-    sizeof(tmp_msg), ESP_NOW_MAX_DATA_LEN);
+    sizeof(light_params), ESP_NOW_MAX_DATA_LEN);
   // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(NULL, (uint8_t *)&tmp_msg, sizeof(tmp_msg));
+  esp_err_t result = esp_now_send(NULL, (uint8_t *)&light_params, sizeof(light_params));
   ESP_LOGI(TAG_BACKPACK, "result:%d", result);
   return (ESP_OK == result);
 }
@@ -39,16 +44,16 @@ void BackpackSync::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t sta
 // callback function that will be executed when data is received
 void BackpackSync::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
 {
-  LightParams2 tmp_msg;
-  for (int i = 0; i < len / sizeof(tmp_msg); i += sizeof(tmp_msg))
+  LightParams light_params;
+  for (int i = 0; i < len / sizeof(light_params); i += sizeof(light_params))
   {
-    memcpy(&tmp_msg + i, incomingData, sizeof(tmp_msg));
+    memcpy(&light_params + i, incomingData, sizeof(light_params));
     if( Singleton::GetInstance()->GetParamsQueue() != 0 )
     {
         /* Send an unsigned long.  Wait for 10 ticks for space to become
         available if necessary. */
         if( xQueueSend( Singleton::GetInstance()->GetParamsQueue(),
-                       &tmp_msg,
+                       &light_params,
                        ( TickType_t ) 10 ) != pdPASS )
         {
             /* Failed to post the message, even after 10 ticks. */

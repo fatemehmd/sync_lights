@@ -45,7 +45,7 @@ uint8_t pattern = 0;
 void light_task(void *PV_Parameters)
 {
   uint32_t ulNotifiedValue;
-  backpack::LightParams2 tmp_msg;
+  backpack::LightParams light_params;
   while (true)
   {
     /* Example code
@@ -55,7 +55,7 @@ void light_task(void *PV_Parameters)
       ESP_LOGI(TAG, "recieved notification");
     }*/
 
-    if(pdPASS == xQueueReceive( Singleton::GetInstance()->GetParamsQueue(), &tmp_msg, (TickType_t)0))
+    if(pdPASS == xQueueReceive( Singleton::GetInstance()->GetParamsQueue(), &light_params, (TickType_t)0))
     {
       ESP_LOGI(TAG, "recieved msg from queue");
       //graphic_controller.setPattern(tmp_msg.layer, tmp_msg.pattern);

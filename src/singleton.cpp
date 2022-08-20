@@ -9,7 +9,7 @@ namespace backpack {
 
 Singleton::Singleton()
 {
-     ParamsQueue = xQueueCreate( 10, sizeof(struct backpack::LightParams2) );
+     ParamsQueue = xQueueCreate( 10, sizeof(struct backpack::LightParams) );
 }
 
 QueueHandle_t Singleton::GetParamsQueue() {

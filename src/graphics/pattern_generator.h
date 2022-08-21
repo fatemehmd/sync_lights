@@ -4,8 +4,8 @@
 #include "patterns/pattern.h"
 #include "patterns/cloud.h"
 #include "patterns/scarf.h"
-#include "patterns/variablePulse.h"
-#include "patterns/rainbowBlast.h"
+#include "patterns/variablepulse.h"
+#include "patterns/rainbowblast.h"
 #include "patterns/sparkle.h"
 #include "patterns/testpattern.h"
 #include "patterns/piano.h"
@@ -13,7 +13,7 @@
 #include "patterns/particles.h"
 #include "patterns/cleave.h"
 #include "patterns/strobe.h"
-#include "patterns/analogFeedback.h"
+#include "patterns/analogfeedback.h"
 
 
 class PatternGenerator

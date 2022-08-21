@@ -1,4 +1,4 @@
-#include "rainbowBlast.h"
+#include "rainbowblast.h"
 
 RainbowBlast::RainbowBlast() : Pattern("Analog1")
 {

@@ -1,4 +1,4 @@
-#include "variablePulse.h"
+#include "variablepulse.h"
 
 VariablePulse::VariablePulse() : Pattern("V Pulse")
 {

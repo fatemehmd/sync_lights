@@ -77,6 +77,16 @@ static void slider_event_handler(lv_event_t * e)
     lv_obj_align_to(slider_label, slider, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);
 }
 
+static void power_off_event_handler(lv_event_t * e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+
+    display::LayerUserData* user_data = (display::LayerUserData*) lv_event_get_user_data(e);
+    user_data->controller->setPowerOff();
+    ESP_LOGI(TAG_DISPLAY, "blah bla %d", (int) code);
+    
+}
+
 static void cw_event_handler(lv_event_t* e) {
   lv_obj_t* cw = lv_event_get_target(e);
   display::LayerUserData* user_data = (display::LayerUserData*) lv_event_get_user_data(e);
@@ -193,45 +203,15 @@ void DisplayContent::createLayerContent(lv_obj_t* tab_ptr, int layerIdx) {
 
 
 void DisplayContent::createWelcomeContent(lv_obj_t* tab_ptr) {
-  
-  //-------------------------------------------------------------------
-  /*Gum-like button*/
-  /*Properties to transition*/
-    static lv_style_prop_t props[] = {
-        LV_STYLE_TRANSFORM_WIDTH, LV_STYLE_TRANSFORM_HEIGHT, LV_STYLE_TEXT_LETTER_SPACE, LV_STYLE_PROP_INV
-    };
-
-    /*Transition descriptor when going back to the default state.
-     *Add some delay to be sure the press transition is visible even if the press was very short*/
-    static lv_style_transition_dsc_t transition_dsc_def;
-    lv_style_transition_dsc_init(&transition_dsc_def, props, lv_anim_path_overshoot, 250, 100, NULL);
-
-    /*Transition descriptor when going to pressed state.
-     *No delay, go to presses state immediately*/
-    static lv_style_transition_dsc_t transition_dsc_pr;
-    lv_style_transition_dsc_init(&transition_dsc_pr, props, lv_anim_path_ease_in_out, 250, 0, NULL);
-
-    /*Add only the new transition to he default state*/
-    static lv_style_t style_def;
-    lv_style_init(&style_def);
-    lv_style_set_transition(&style_def, &transition_dsc_def);
-
-    /*Add the transition and some transformation to the presses state.*/
-    static lv_style_t style_pr;
-    lv_style_init(&style_pr);
-    lv_style_set_transform_width(&style_pr, 10);
-    lv_style_set_transform_height(&style_pr, -10);
-    lv_style_set_text_letter_space(&style_pr, 10);
-    lv_style_set_transition(&style_pr, &transition_dsc_pr);
 
     lv_obj_t * btn1 = lv_btn_create(tab_ptr);
-    lv_obj_align(btn1, LV_ALIGN_CENTER, 0, -80);
-    lv_obj_add_style(btn1, &style_pr, LV_STATE_PRESSED);
-    lv_obj_add_style(btn1, &style_def, 0);
+    lv_obj_align(btn1, LV_ALIGN_BOTTOM_MID, 0, 0);
 
     lv_obj_t * label = lv_label_create(btn1);
-    lv_label_set_text(label, "Gum");
- 
+    lv_label_set_text(label, "Power Off");
+    display::LayerUserData* user_data = new display::LayerUserData();
+    user_data->controller = graphic_controller_;
+    lv_obj_add_event_cb(btn1, power_off_event_handler, LV_EVENT_PRESSED, user_data);
 }
 
 void DisplayContent::update() {

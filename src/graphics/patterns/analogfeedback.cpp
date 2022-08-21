@@ -1,4 +1,4 @@
-#include "analogFeedback.h"
+#include "analogfeedback.h"
 
 AnalogFeedback::AnalogFeedback() : Pattern("Analog2")
 {

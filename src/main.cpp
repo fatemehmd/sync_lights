@@ -11,17 +11,18 @@
 #include "freertos/FreeRTOS.h"
 #include "WiFi.h"
 
-#include "communication_helper.h"
 #include "backpack_sync.h"
+#include "communication_helper.h"
 #include "data_types.h"
-#include "singleton.h"
-#include "graphics/state.h"
+#include "display/display_content.h"
 #include "graphics/outputs.h"
 #include "graphics/renderer.h"
+#include "graphics/state.h"
 #include "graphics/transport.h"
-#include "data_types.h"
 #include "graphic_controller.h"
-#include "display/display_content.h"
+#include "singleton.h"
+
+
 
 
 const char *TAG = "Main";
@@ -126,6 +127,10 @@ void loop()
 
   graphic_controller.update();
   display_content.update();
+  if (graphic_controller.getPowerOff()) {
+    ESP_LOGE(TAG,"Mahan mige fuck");
+    M5.Axp.PowerOff();
+  }
   delay(5);
 
 }

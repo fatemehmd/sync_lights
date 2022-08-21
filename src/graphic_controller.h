@@ -54,13 +54,16 @@ public:
     void setup();
     void update();
 
+    void setPowerOff();
+    bool getPowerOff();
 
 private:
     Renderer *renderer;
     Outputs *outputs;
     State state = State();
     Transport transport = Transport(125);
-    bool params_updated = false;
+    bool newParams = false;
+    bool powerOff = false;
 };
 }  // namespace graphics
 }  // namespace backpack 

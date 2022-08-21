@@ -122,17 +122,25 @@ void GraphicController::setLightParams(backpack::LightParams& params) {
        // setHueSpan(layerIdx,params.layer_data[i].pallete_params.hue_span);
         setOpacity(layerIdx, params.layer_data[i].opacity);
       }
-      params_updated = true;
+      newParams = true;
 }
 
 bool GraphicController::paramsUpdated() {
-    return params_updated;
+    return newParams;
 
 }
 
 LightParams GraphicController::readNewParams() {
-    params_updated = false;
+    newParams = false;
     return getLightParams();
+}
+
+void GraphicController::setPowerOff() {
+    powerOff = true;
+}
+
+bool GraphicController::getPowerOff() {
+    return powerOff;
 }
 
 }  // namespace graphics

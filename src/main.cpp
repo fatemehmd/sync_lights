@@ -29,6 +29,8 @@ const char *TAG = "Main";
 
 using backpack::BackpackSync;
 using backpack::Singleton;
+using backpack::graphics::GraphicController;
+using backpack::display::DisplayContent;
 
 TaskHandle_t lightHandle = NULL;
 

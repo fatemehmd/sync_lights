@@ -6,7 +6,9 @@
 #include "graphics/outputs.h"
 #include "graphics/transport.h"
 #include "data_types.h"
+#include "lvgl.h"
 
+namespace backpack {
 namespace graphics {
     static const std::string patternList[10] = {"Cloud", 
     "AnalogFeedback", 
@@ -21,7 +23,7 @@ namespace graphics {
 
 
 std::string getPatternList();
-}  // namespace graphics
+
 
 class GraphicController
 {
@@ -42,8 +44,12 @@ public:
     
     //void setHueSpan(int layerIdx, int span);
     
-    void setLightParams(backpack::LightParams& params);
-    backpack::LightParams getLightParams();
+    void setLightParams(LightParams& params);
+    LightParams getLightParams();
+
+    // For display content to update menus when get params over wifi.
+    bool paramsUpdated();
+    LightParams readNewParams();
 
     void setup();
     void update();
@@ -54,6 +60,8 @@ private:
     Outputs *outputs;
     State state = State();
     Transport transport = Transport(125);
-
+    bool params_updated = false;
 };
+}  // namespace graphics
+}  // namespace backpack 
 #endif

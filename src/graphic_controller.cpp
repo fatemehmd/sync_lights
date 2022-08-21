@@ -3,19 +3,19 @@
 #include <esp_log.h>
 #include "graphics/pattern_generator.h"
 
-const char *gTAG = "gcntroller";
-
-using backpack::LightParams;
-
+namespace backpack {
 namespace graphics {
-    std::string getPatternList() {
+
+const char *TAG_GRAPHIC = "gcntroller";
+
+std::string getPatternList() {
     std::string list = "";
     for (const std::string& s : graphics::patternList) {
         list += s + "\n";
     }
     return list;
 }
-}  // namespace graphics
+
 
 void GraphicController::setup() {
   transport.Reset();
@@ -25,7 +25,7 @@ void GraphicController::setup() {
   outputs = new Outputs(&state);
   renderer = new Renderer(state);
 
- ESP_LOGI(gTAG, "controller setup complete");
+ ESP_LOGI(TAG_GRAPHIC, "controller setup complete");
 
     for (int layerIdx = 0; layerIdx < NUM_LAYERS; layerIdx++)
     {
@@ -111,7 +111,7 @@ backpack::LightParams GraphicController::getLightParams() {
 void GraphicController::setLightParams(backpack::LightParams& params) {
 
       for (int i=0; i<M5_NUM_LAYERS; i++) {
-        ESP_LOGI(gTAG, "layer %d, pattern %d, opacity %d", 
+        ESP_LOGI(TAG_GRAPHIC, "layer %d, pattern %d, opacity %d", 
                       params.layer_data[i].layerIdx, 
                       params.layer_data[i].pattern, 
                       params.layer_data[i].opacity);
@@ -122,4 +122,18 @@ void GraphicController::setLightParams(backpack::LightParams& params) {
        // setHueSpan(layerIdx,params.layer_data[i].pallete_params.hue_span);
         setOpacity(layerIdx, params.layer_data[i].opacity);
       }
+      params_updated = true;
 }
+
+bool GraphicController::paramsUpdated() {
+    return params_updated;
+
+}
+
+LightParams GraphicController::readNewParams() {
+    params_updated = false;
+    return getLightParams();
+}
+
+}  // namespace graphics
+}  // namespace backpack 

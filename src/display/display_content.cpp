@@ -80,11 +80,8 @@ static void slider_event_handler(lv_event_t * e)
 static void power_off_event_handler(lv_event_t * e)
 {
     lv_event_code_t code = lv_event_get_code(e);
-
     display::LayerUserData* user_data = (display::LayerUserData*) lv_event_get_user_data(e);
     user_data->controller->setPowerOff();
-    ESP_LOGI(TAG_DISPLAY, "blah bla %d", (int) code);
-    
 }
 
 static void cw_event_handler(lv_event_t* e) {
@@ -92,6 +89,8 @@ static void cw_event_handler(lv_event_t* e) {
   display::LayerUserData* user_data = (display::LayerUserData*) lv_event_get_user_data(e);
   lv_color_hsv_t hsv = lv_colorwheel_get_hsv(cw);
   user_data->controller->setHue(user_data->layerIdx, hsv.h);
+  // Use value for Opacity.
+  user_data->controller->setOpacity(user_data->layerIdx, hsv.v);
 }
 
 void create_slider(lv_obj_t* parent, int id) {
@@ -158,13 +157,13 @@ void DisplayContent::createLayerContent(lv_obj_t* tab_ptr, int layerIdx) {
   lv_dropdown_set_selected(ddlist[layerIdx], pattern);
 
   lv_obj_align(ddlist[layerIdx], LV_ALIGN_TOP_MID, 5,5);
-  lv_obj_add_event_cb(ddlist[layerIdx], list_event_handler, LV_EVENT_ALL, layer_user_data);
+  lv_obj_add_event_cb(ddlist[layerIdx], list_event_handler, LV_EVENT_VALUE_CHANGED, layer_user_data);
 
   cw[layerIdx] = lv_colorwheel_create(tab_ptr, true);
   lv_obj_set_size(cw[layerIdx], 150, 150);
   lv_obj_center(cw[layerIdx]);
   lv_obj_align_to(cw[layerIdx], ddlist[layerIdx], LV_ALIGN_OUT_BOTTOM_MID, 0, 15);
-  lv_obj_add_event_cb(cw[layerIdx], cw_event_handler, LV_EVENT_ALL, layer_user_data);
+  lv_obj_add_event_cb(cw[layerIdx], cw_event_handler, LV_EVENT_VALUE_CHANGED, layer_user_data);
 
   int slider_num = 6;
   lv_obj_t* slider[slider_num];
@@ -200,7 +199,6 @@ void DisplayContent::createLayerContent(lv_obj_t* tab_ptr, int layerIdx) {
     create_slider(cont_row, i);
   }
 }
-
 
 void DisplayContent::createWelcomeContent(lv_obj_t* tab_ptr) {
 

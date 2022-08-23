@@ -77,20 +77,28 @@ void GraphicController::getPatternParams(int layerIdx) {
 }
 
 void GraphicController::setOpacity(int layerIdx, int value) {
-    state.setLayerParam(LayerParams::MixOpacity, layerIdx, value);
+    // lvgl value is between 0..100. Scaling up for fast led.
+    int opacity = (value * 255) / 100;
+    state.setLayerParam(LayerParams::MixOpacity, layerIdx, opacity);
 }
 
 int GraphicController::getOpacity(int layerIdx) {
-    return state.layerParam(LayerParams::MixOpacity, layerIdx);
+    // lvgl value is between 0..100. Scaling down.
+    int opacity = state.layerParam(LayerParams::MixOpacity, layerIdx);
+    return (opacity * 100) / 255;
 }
 
-
 void GraphicController::setHue(int layerIdx, int hue) {
-    state.setHue(layerIdx, hue);
+    int fastled_hue = (hue * 255) / 359; /*max value of lvgl hue*/
+    ESP_LOGI(TAG_GRAPHIC, "hue: %d, fastled_hue: %d", hue, fastled_hue);
+    state.setHue(layerIdx, fastled_hue);
 }
 
 int GraphicController::getHue(int layerIdx) {
-    return state.getHue(layerIdx);
+    int fastled_hue = state.getHue(layerIdx);
+    int hue = (fastled_hue * 359) / 255;
+    ESP_LOGI(TAG_GRAPHIC, "hue: %d, fastled_hue: %d", hue, fastled_hue);
+    return hue;
 }
 
 backpack::LightParams GraphicController::getLightParams() {

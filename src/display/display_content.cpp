@@ -88,9 +88,12 @@ static void cw_event_handler(lv_event_t* e) {
   lv_obj_t* cw = lv_event_get_target(e);
   display::LayerUserData* user_data = (display::LayerUserData*) lv_event_get_user_data(e);
   lv_color_hsv_t hsv = lv_colorwheel_get_hsv(cw);
-  user_data->controller->setHue(user_data->layerIdx, hsv.h);
-  // Use value for Opacity.
-  user_data->controller->setOpacity(user_data->layerIdx, hsv.v);
+  // scale from ui values to fastled values
+  int hue = map(hsv.h, 0, 359, 0, 255);
+  int opacity = map(hsv.v, 0, 100, 0, 255);
+  user_data->controller->setHue(user_data->layerIdx, hue);
+  // Use "value" for Opacity.
+  user_data->controller->setOpacity(user_data->layerIdx, opacity);
 }
 
 void create_slider(lv_obj_t* parent, int id) {
@@ -201,6 +204,11 @@ void DisplayContent::createLayerContent(lv_obj_t* tab_ptr, int layerIdx) {
 }
 
 void DisplayContent::createWelcomeContent(lv_obj_t* tab_ptr) {
+    lv_obj_t * qoute = lv_label_create(tab_ptr);
+    lv_obj_align(qoute, LV_ALIGN_CENTER, 0, -20);
+
+    lv_label_set_text(qoute, "Life is a winking light \nin the darkness.");
+
 
     lv_obj_t * btn1 = lv_btn_create(tab_ptr);
     lv_obj_align(btn1, LV_ALIGN_BOTTOM_MID, 0, 0);
@@ -215,14 +223,17 @@ void DisplayContent::createWelcomeContent(lv_obj_t* tab_ptr) {
 void DisplayContent::update() {
   if (graphic_controller_->paramsUpdated()) {
     LightParams params = graphic_controller_->readNewParams();
+
     ESP_LOGI(TAG_DISPLAY, "Reading new params.");
     for (int i=0; i<M5_NUM_LAYERS; i++) {
-      ESP_LOGI(TAG_DISPLAY, "Params for layer %d pattern %d hue %d",
-        i, params.layer_data[i].pattern, params.layer_data[i].hue);
+      int hue = map(params.layer_data[i].hue, 0,255, 0, 359);
+      int opacity = map(params.layer_data[i].opacity, 0, 255, 0, 100);
+      ESP_LOGI(TAG_DISPLAY, "UI Params for layer %d pattern %d hue %d op %d",
+        i, params.layer_data[i].pattern, hue, opacity);
       LayerUserData user_data(graphic_controller_, i);
 
       lv_dropdown_set_selected(ddlist[i], params.layer_data[i].pattern);
-      lv_color_hsv_t hsv = {params.layer_data[i].hue, 200, params.layer_data[i].opacity};
+      lv_color_hsv_t hsv = {hue, 100, opacity};
       lv_colorwheel_set_hsv(cw[i], hsv);
     }
   }

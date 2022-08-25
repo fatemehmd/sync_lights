@@ -78,26 +78,23 @@ void GraphicController::getPatternParams(int layerIdx) {
 
 void GraphicController::setOpacity(int layerIdx, int value) {
     // lvgl value is between 0..100. Scaling up for fast led.
-    int opacity = (value * 255) / 100;
-    state.setLayerParam(LayerParams::MixOpacity, layerIdx, opacity);
+    state.setLayerParam(LayerParams::MixOpacity, layerIdx, value);
 }
 
 int GraphicController::getOpacity(int layerIdx) {
     // lvgl value is between 0..100. Scaling down.
     int opacity = state.layerParam(LayerParams::MixOpacity, layerIdx);
-    return (opacity * 100) / 255;
+    return opacity;
 }
 
 void GraphicController::setHue(int layerIdx, int hue) {
-    int fastled_hue = (hue * 255) / 359; /*max value of lvgl hue*/
-    ESP_LOGI(TAG_GRAPHIC, "hue: %d, fastled_hue: %d", hue, fastled_hue);
-    state.setHue(layerIdx, fastled_hue);
+    ESP_LOGI(TAG_GRAPHIC, "hue: %d", hue);
+    state.setHue(layerIdx, hue);
 }
 
 int GraphicController::getHue(int layerIdx) {
-    int fastled_hue = state.getHue(layerIdx);
-    int hue = (fastled_hue * 359) / 255;
-    ESP_LOGI(TAG_GRAPHIC, "hue: %d, fastled_hue: %d", hue, fastled_hue);
+    int hue = state.getHue(layerIdx);
+    ESP_LOGI(TAG_GRAPHIC, "hue: fastled_hue: %d",  hue);
     return hue;
 }
 
